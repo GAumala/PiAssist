@@ -1,14 +1,14 @@
 module Inputs (
-Input16BitCode,
+InputCode,
 InputWord,
 
 ArrowCombination,
 PunchCombination,
 KickCombination,
 
-arrowsTo16BitCode,
-punchesTo16BitCode,
-kicksTo16BitCode,
+arrowsToCode,
+punchesToCode,
+kicksToCode,
 
 arrowsFromWord,
 punchesFromWord,
@@ -18,33 +18,33 @@ where
 
 import Data.List
 
-type Input16BitCode = Int
+type InputCode = Int
 type InputWord = String
 
 data ArrowCombination = NO_ARROWS | LEFT | RIGHT | UP | DOWN |
     DOWN_LEFT | DOWN_RIGHT | UP_LEFT | UP_RIGHT
 
-arrowsTo16BitCode :: ArrowCombination -> Input16BitCode
-arrowsTo16BitCode NO_ARROWS = 2
-arrowsTo16BitCode DOWN = 3
-arrowsTo16BitCode RIGHT = 5
-arrowsTo16BitCode LEFT = 7
-arrowsTo16BitCode UP = 11
-arrowsTo16BitCode DOWN_LEFT = 13
-arrowsTo16BitCode DOWN_RIGHT = 17
-arrowsTo16BitCode UP_LEFT = 23
-arrowsTo16BitCode UP_RIGHT = 29
+arrowsToCode :: ArrowCombination -> InputCode
+arrowsToCode NO_ARROWS  = 0
+arrowsToCode DOWN       = 1
+arrowsToCode RIGHT      = 2
+arrowsToCode LEFT       = 3
+arrowsToCode UP         = 4
+arrowsToCode DOWN_LEFT  = 5
+arrowsToCode DOWN_RIGHT = 6
+arrowsToCode UP_LEFT    = 7
+arrowsToCode UP_RIGHT   = 8
 
 instance Show ArrowCombination where
-    show NO_ARROWS = "none"
-    show DOWN = "down"
-    show LEFT = "left"
-    show RIGHT = "right"
-    show UP = "up"
-    show DOWN_LEFT = "downleft"
+    show NO_ARROWS  = "none"
+    show DOWN       = "down"
+    show LEFT       = "left"
+    show RIGHT      = "right"
+    show UP         = "up"
+    show DOWN_LEFT  = "downleft"
     show DOWN_RIGHT = "downright"
-    show UP_RIGHT = "upright"
-    show UP_LEFT = "upleft"
+    show UP_RIGHT   = "upright"
+    show UP_LEFT    = "upleft"
 
 arrowsFromWord :: InputWord -> ArrowCombination
 arrowsFromWord word
@@ -64,25 +64,25 @@ arrowsFromWord word
 
 data PunchCombination = NO_PUNCHES | LP | MP | HP | LPMP | LPHP | MPHP | LPMPHP
 
-punchesTo16BitCode :: PunchCombination -> Input16BitCode
-punchesTo16BitCode NO_PUNCHES = 31
-punchesTo16BitCode LP         = 37
-punchesTo16BitCode MP         = 41
-punchesTo16BitCode HP         = 43
-punchesTo16BitCode LPMP       = 47
-punchesTo16BitCode MPHP       = 53
-punchesTo16BitCode LPHP       = 59
-punchesTo16BitCode LPMPHP     = 61
+punchesToCode :: PunchCombination -> InputCode
+punchesToCode NO_PUNCHES = 9
+punchesToCode LP         = 10
+punchesToCode MP         = 11
+punchesToCode HP         = 12
+punchesToCode LPMP       = 13
+punchesToCode MPHP       = 14
+punchesToCode LPHP       = 15
+punchesToCode LPMPHP     = 16
 
 instance Show PunchCombination where
     show NO_PUNCHES = "none"
-    show LP = "lp"
-    show MP = "mp"
-    show HP = "hp"
-    show LPMP = "lpmp"
-    show MPHP = "mphp"
-    show LPHP = "lphp"
-    show LPMPHP = "lpmphp"
+    show LP         = "lp"
+    show MP         = "mp"
+    show HP         = "hp"
+    show LPMP       = "lpmp"
+    show MPHP       = "mphp"
+    show LPHP       = "lphp"
+    show LPMPHP     = "lpmphp"
 
 punchesFromWord :: InputWord -> PunchCombination
 punchesFromWord word
@@ -100,25 +100,25 @@ punchesFromWord word
 
 data KickCombination = NO_KICKS | LK | MK | HK | LKMK | LKHK | MKHK | LKMKHK
 
-kicksTo16BitCode :: KickCombination -> Input16BitCode
-kicksTo16BitCode NO_KICKS = 67
-kicksTo16BitCode LK       = 71
-kicksTo16BitCode MK       = 73
-kicksTo16BitCode HK       = 79
-kicksTo16BitCode LKMK     = 83
-kicksTo16BitCode MKHK     = 89
-kicksTo16BitCode LKHK     = 97
-kicksTo16BitCode LKMKHK   = 103
+kicksToCode :: KickCombination -> InputCode
+kicksToCode NO_KICKS = 17
+kicksToCode LK       = 18
+kicksToCode MK       = 19
+kicksToCode HK       = 20
+kicksToCode LKMK     = 21
+kicksToCode MKHK     = 22
+kicksToCode LKHK     = 23
+kicksToCode LKMKHK   = 24
 
 instance Show KickCombination where
     show NO_KICKS = "none"
-    show LK = "lk"
-    show MK = "mk"
-    show HK = "hk"
-    show LKMK = "lkmk"
-    show MKHK = "mkhk"
-    show LKHK = "lkhk"
-    show LKMKHK = "lkmkhk"
+    show LK       = "lk"
+    show MK       = "mk"
+    show HK       = "hk"
+    show LKMK     = "lkmk"
+    show MKHK     = "mkhk"
+    show LKHK     = "lkhk"
+    show LKMKHK   = "lkmkhk"
 
 kicksFromWord :: InputWord -> KickCombination
 kicksFromWord word
@@ -140,8 +140,9 @@ data FrameInput = FrameInput {
     kicks :: KickCombination
 }
 
-frameInputTo16BitCode :: FrameInput -> Input16BitCode
-frameInputTo16BitCode input = x * y * z
-    where x = arrowsTo16BitCode (arrows input)
-          y = punchesTo16BitCode (punches input)
-          z = kicksTo16BitCode (kicks input)
+frameInputToString :: FrameInput -> String
+frameInputToString input = mconcat [show x , separator, show y , separator, show z]
+    where x = arrowsToCode (arrows input)
+          y = punchesToCode (punches input)
+          z = kicksToCode (kicks input)
+          separator = ":"
