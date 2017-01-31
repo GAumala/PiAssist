@@ -1,11 +1,4 @@
-#include <stdio.h>    // Used for printf() statements
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <wiringPi.h> // Include WiringPi library!
 #include "pi.h"
-
-uint8_t pins[10];
 
 
 uint8_t *get_bits_from_int(uint8_t byte, uint8_t bits_wanted){
@@ -94,9 +87,9 @@ void write(uint8_t pins[], uint8_t valores[]){
 }
 
 
-void fill_queue(head_t *head, char* input_values){
+int fill_queue(head_t *head, char* input_values){
   char* token = 0;
-
+  int rows;
   token = strtok(input_values, ",");
   while(token != NULL){
 
@@ -120,23 +113,7 @@ void fill_queue(head_t *head, char* input_values){
     TAILQ_INSERT_TAIL(head, e, nodes);
     e = NULL;
 
+    rows++;
   }
-}
-
-
-int main(int argc, char *argv[]){
-
-  char* input_values = (char*)argv[1];
-  head_t head;
-  /* Define a pointer to an item in the tail queue. */
-  struct node *bytes_to_write;
-
-  /* In some cases we have to track a temporary item. */
-  struct node *tmp_bytes_to_write;
-  TAILQ_INIT(&head);
-
-  fill_queue(&head, input_values);
-  write_bytes_to_pi(pins, &head);
-  printf("\n Success writing values to pi....\n");
-  return 0;
+  return rows;
 }
