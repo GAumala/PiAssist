@@ -1,8 +1,8 @@
-module WaitProcessing (
+module WaitCmdProcessing (
     expandWaitingFrames
 ) where
 
-import Inputs
+import InputModels
 
 import Data.Char
 import Data.List
