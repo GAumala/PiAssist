@@ -1,6 +1,13 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Main where
 
 import Lib
+import ReadArgs
 
 main :: IO ()
-main = someFunc
+main = do
+    (scriptFilepath :: FilePath) <- readArgs
+    input <- readFile scriptFilepath
+    let output = compileScript input
+    putStrLn output
