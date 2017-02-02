@@ -1,7 +1,23 @@
-## Synopsis
+# PiAssist
 
-..............
+[![Build
+Status](https://travis-ci.org/GAumala/PiAssist.svg?branch=master)](https://travis-ci.org/GAumala/PiAssist)
 
+## How to build the script compiler
+
+Make sure you have installed
+[Stack](https://docs.haskellstack.org/en/stable/README/) in your system.
+
+```
+cd input-script-parser
+stack setup
+stack build
+```
+Now you can compile any script to stdout with:
+
+```
+stack exec input-script-parser-exe my-script.txt
+```
 
 ## How to launch the C program.
 
@@ -14,6 +30,3 @@
 * Sebastian Caceres
 * Gabriel Aumala
 
-## License
-
-....................
