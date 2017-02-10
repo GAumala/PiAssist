@@ -3,17 +3,13 @@ import paho.mqtt.client as mqtt
 import os
 import socket
 
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(("google.com", 80))
-HOST = s.getsockname()[0]
-ARCHIVO = "content_received.txt"
-s.close()
+HOST = "localhost"
+TOPIC = "tas"
 
 try:
-    TOPIC = sys.argv[1]
-
+    SCRIPT = sys.argv[1]
 except:
-    print("Missing topic.")
+    print("Missing bash script to execute.")
     sys.exit()
 
 
@@ -26,16 +22,12 @@ def on_connect(client, userdata, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    # print(msg.topic+" "+str(msg.payload))
-    # os.system('./tas ' + str(msg.payload))
-    archivo = open(ARCHIVO, 'a')
-    archivo.write(str(msg.payload))
-    archivo.close()
+    Popen([SCRIPT, str(lines)], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+    grep_stdout = p.communicate(input=msg.payload)[0]
+    print(grep_stdout.decode())
 
 
 client = mqtt.Client()
-os.getcwd()
-os.chdir("../pi")  # changing our current working directory.
 client.on_connect = on_connect
 client.on_message = on_message
 client.connect(HOST, 1883, 60)
