@@ -1,6 +1,6 @@
 CC=gcc
 PROGRAMS=tas
-DEBUG=no
+DEBUG=yes
 ifeq ($(DEBUG), yes)
 	DEBUG_FLAGS = -D SIMULATION -D DEBUG
 else

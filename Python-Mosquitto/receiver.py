@@ -2,8 +2,9 @@ import sys
 import paho.mqtt.client as mqtt
 import os
 import socket
+from subprocess import Popen, PIPE, STDOUT
 
-HOST = "localhost"
+HOST = "192.168.0.5"
 TOPIC = "tas"
 
 try:
@@ -22,7 +23,8 @@ def on_connect(client, userdata, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    Popen([SCRIPT, str(lines)], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+    lines = len(msg.payload.splitlines())
+    p = Popen([SCRIPT, str(lines)], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
     grep_stdout = p.communicate(input=msg.payload)[0]
     print(grep_stdout.decode())
 
