@@ -216,7 +216,7 @@ instance InputCombination PunchCombination where
 
 
 punchesToCode :: PunchCombination -> InputCode
-punchesToCode NO_PUNCHES = 9
+punchesToCode NO_PUNCHES = 0
 punchesToCode LP         = 10
 punchesToCode MP         = 11
 punchesToCode HP         = 12
@@ -309,7 +309,7 @@ instance InputCombination KickCombination where
     LKMKHK `minusC` HK = LKMK
 
 kicksToCode :: KickCombination -> InputCode
-kicksToCode NO_KICKS = 17
+kicksToCode NO_KICKS = 0
 kicksToCode LK       = 18
 kicksToCode MK       = 19
 kicksToCode HK       = 20

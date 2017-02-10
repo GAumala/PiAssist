@@ -11,3 +11,5 @@ main = do
     input <- readFile scriptFilepath
     let output = compileScript input
     putStrLn output
+    --print extra line needed to terminate file
+    putStrLn ""
