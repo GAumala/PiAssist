@@ -25,6 +25,12 @@ stack exec input-script-parser-exe my-script.txt
 2. Execute `make` in the project directory, then execute `./main`.
 
 
+## How to launch the subscriber
+
+1. install the package  `mosquitto`. Verify that the server is successfully running using `systemctl status mosquitto` 
+2. Install the `paho-mosquitto` library using pip.
+3. When you run the script `receiver.py` don't forget to put the first argument that represents the topic you subscribe to.
+
 ## Contributors
 
 * Sebastian Caceres
