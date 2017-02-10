@@ -32,6 +32,7 @@ int main (int argc, char *argv[]) {
 	fi = input_list[total_frames - 2];
 	printf("penultimo: %i, %i, %i\n", fi.arrows, fi.punches, fi.kicks);
 	*/
+	
 
 	return run_gpio_tas(input_list, total_frames);
 }

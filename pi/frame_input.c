@@ -9,10 +9,6 @@ FrameInput frame_input_new(uint8_t arrows, uint8_t punches, uint8_t kicks) {
 }
 
 
-FrameInput frame_input_from_(char *str) {
-
-}
-
 void frame_input_fill_array(FrameInput input, uint8_t array[]) {
 	switch (input.arrows) {
 		case DOWN_INPUT:

@@ -1,4 +1,12 @@
 #include "gpio.h"
+#include "printd.h"
+
+#ifdef SIMULATION
+	#define WRITE_TO_GPIO fake_digitalWrite
+#else
+	#define WRITE_TO_GPIO digitalWrite
+#endif
+
 
 typedef enum {START, RUNNING, FINISH} TAS_STATE;
 
@@ -21,48 +29,62 @@ void setup_gpio_pins() {
 	pinMode(CLOCK_PIN, OUTPUT);
 }
 
+void fake_digitalWrite(int pinNumber, int value) {
+	if (value)
+		printf("turn on pin #%i\n", pinNumber);
+	else
+		printf("turn off pin #%i\n", pinNumber);
+}
+
 void gpio_write(uint8_t array[]) {
 	for (int i = 0; i < INPUTS_COUNT; i++) {
 		switch (i) {
 			case LEFT_PIN_INDEX:
-				digitalWrite(LEFT_PIN, array[i]); 
+				WRITE_TO_GPIO(LEFT_PIN, array[i]); 
 				break;
 			case RIGHT_PIN_INDEX:
-				digitalWrite(RIGHT_PIN, array[i]); 
+				WRITE_TO_GPIO(RIGHT_PIN, array[i]); 
 				break;
 			case DOWN_PIN_INDEX:
-				digitalWrite(DOWN_PIN, array[i]); 
+				WRITE_TO_GPIO(DOWN_PIN, array[i]); 
 				break;
 			case UP_PIN_INDEX:
-				digitalWrite(UP_PIN, array[i]); 
+				WRITE_TO_GPIO(UP_PIN, array[i]); 
 				break;
 			case LP_PIN_INDEX:
-				digitalWrite(LP_PIN, array[i]); 
+				WRITE_TO_GPIO(LP_PIN, array[i]); 
 				break;
 			case MP_PIN_INDEX:
-				digitalWrite(MP_PIN, array[i]); 
+				WRITE_TO_GPIO(MP_PIN, array[i]); 
 				break;
 			case HP_PIN_INDEX:
-				digitalWrite(HP_PIN, array[i]); 
+				WRITE_TO_GPIO(HP_PIN, array[i]); 
 				break;
 			case LK_PIN_INDEX:
-				digitalWrite(LK_PIN, array[i]); 
+				WRITE_TO_GPIO(LK_PIN, array[i]); 
 				break;
 			case MK_PIN_INDEX:
-				digitalWrite(MK_PIN, array[i]); 
+				WRITE_TO_GPIO(MK_PIN, array[i]); 
 				break;
 			case HK_PIN_INDEX:
-				digitalWrite(HK_PIN, array[i]); 
+				WRITE_TO_GPIO(HK_PIN, array[i]); 
 				break;
 		}
 	}
+}
+
+void init_pin_array(uint8_t array[]) {
+	for (int i = 0; i < INPUTS_COUNT; i++) 
+		array[i] = 0;
 }
 
 void on_new_frame(void) {
 	if (state == RUNNING) {
         if (it < input_count) {
 			uint8_t array[INPUTS_COUNT];
+			init_pin_array(array);
 			frame_input_fill_array(input_list[it], array);
+			printd("==================== #%i\n", it);
 			gpio_write(array);
 			it++;
         } else 
@@ -75,17 +97,19 @@ void on_new_frame(void) {
 
 int run_gpio_tas(FrameInput *list, int count) {
 	input_list = list;
-	count = count;
+	input_count = count;
 	it = 0;
     state = START;
-	
+	printd("start\n");
 	setup_gpio_pins();
     if ( wiringPiISR (CLOCK_PIN, INT_EDGE_BOTH, &on_new_frame) < 0 ) {
         fprintf (stderr, "Unable to setup ISR: %s\n", strerror (errno));
         return 1;
     }
 
-  while ( state != FINISH ) {  }
+	printd("end setup\n");
+    while ( state != FINISH ) {  }
 
-  return 0;
+	printd("finish\n");
+	return 0;
 }
