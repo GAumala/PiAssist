@@ -26,7 +26,7 @@ void setup_gpio_pins() {
 	pinMode(LK_PIN, OUTPUT);
 	pinMode(MK_PIN, OUTPUT);
 	pinMode(HK_PIN, OUTPUT);
-	pinMode(CLOCK_PIN, OUTPUT);
+	pinMode(CLOCK_PIN, INPUT);
 }
 
 void fake_digitalWrite(int pinNumber, int value) {
@@ -94,6 +94,28 @@ void on_new_frame(void) {
     }
 }
 
+int should_continue_loop() {
+    return state != FINISH;
+}
+
+int loop_with_interrupts() {
+    if ( wiringPiISR (CLOCK_PIN, INT_EDGE_BOTH, &on_new_frame) < 0 ) {
+        fprintf (stderr, "Unable to setup ISR: %s\n", strerror (errno));
+        return 1;
+    }
+
+	printd("end setup\n");
+    while ( should_continue_loop() ) {  }
+    return 0;
+}
+
+int loop_with_delays() {
+    while (should_continue_loop() ) {
+        on_new_frame();
+        delayMicroseconds(16667);
+    }
+    return 0;
+}
 
 int run_gpio_tas(FrameInput *list, int count) {
 	input_list = list;
@@ -101,14 +123,9 @@ int run_gpio_tas(FrameInput *list, int count) {
 	it = 0;
     state = START;
 	printd("start\n");
-	setup_gpio_pins();
-    if ( wiringPiISR (CLOCK_PIN, INT_EDGE_BOTH, &on_new_frame) < 0 ) {
-        fprintf (stderr, "Unable to setup ISR: %s\n", strerror (errno));
-        return 1;
-    }
 
-	printd("end setup\n");
-    while ( state != FINISH ) {  }
+	setup_gpio_pins();
+    loop_with_delays();
 
 	printd("finish\n");
 	return 0;
